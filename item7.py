@@ -7,10 +7,21 @@ def p(F,B,fs):
 
 def polos_vocal(vocal,fs):
     polos = np.empty(8,dtype=np.clongdouble)
-    for i in range(0,3):
+    for i in range(0,4):
         polos[2*i] = p(vocal[0][i],vocal[1][i],fs)
         polos[2*i+1] = np.conj(polos[2*i])
     return polos
+
+def forma_sos_filtro(polos):
+    sos = np.empty([4,6])
+    for i in range(0,4):
+        sos[i][0] = 1
+        sos[i][1] = 0
+        sos[i][2] = 0
+        sos[i][3] = 1
+        sos[i][4] = -2 * np.real(polos[2*i])
+        sos[i][5] = np.abs(polos[2*i])**2
+    return sos
 
 fs = 16e3
 
@@ -20,10 +31,10 @@ vocal_i = [[330,2765,3740,4366],[70,130,178,200]]
 vocal_o = [[546,934,2966,3930],[97,130,185,240]]
 vocal_u = [[382,740,2760,3380],[74,150,210,180]]
 
-z, p, k = [], polos_vocal(vocal_o,fs), 200
+p = polos_vocal(vocal_o,fs)
+sos = forma_sos_filtro(p)
 
-w, h = sgn.freqz_zpk(z, p, k)
-w = w * 0.5 * fs/np.pi
+w, h = sgn.sosfreqz(sos,fs=fs)
 
 fig = plt.figure(1)
 
@@ -42,6 +53,8 @@ plt.axis('tight')
 
 plt.figure(2)
 plt.title('Diagrama de polos y ceros del filtro digital')
+plt.xlabel('Re(Z)')
+plt.ylabel('Im(Z)')
 plt.scatter(np.real(p),np.imag(p),s=50, marker='x')
 plt.grid()
 
