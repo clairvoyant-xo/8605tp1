@@ -6,7 +6,7 @@ def p(F,B,fs):
     return np.exp(-2 * np.pi * B/fs) * np.exp(2j * np.pi * F/fs)
 
 def polos_vocal(vocal,fs):
-    polos = np.empty(8,dtype=np.cdouble)
+    polos = np.empty(8,dtype=np.clongdouble)
     for i in range(0,3):
         polos[2*i] = p(vocal[0][i],vocal[1][i],fs)
         polos[2*i+1] = np.conj(polos[2*i])
@@ -20,7 +20,7 @@ vocal_i = [[330,2765,3740,4366],[70,130,178,200]]
 vocal_o = [[546,934,2966,3930],[97,130,185,240]]
 vocal_u = [[382,740,2760,3380],[74,150,210,180]]
 
-z, p, k = [], polos_vocal(vocal_e,fs), 1
+z, p, k = [], polos_vocal(vocal_o,fs), 200
 
 w, h = sgn.freqz_zpk(z, p, k)
 w = w * 0.5 * fs/np.pi
@@ -39,5 +39,10 @@ angles = np.unwrap(np.angle(h))
 ax2.plot(w, angles, 'g')
 ax2.set_ylabel('Fase [rad]', color='g')
 plt.axis('tight')
+
+plt.figure(2)
+plt.title('Diagrama de polos y ceros del filtro digital')
+plt.scatter(np.real(p),np.imag(p),s=50, marker='x')
+plt.grid()
 
 plt.show()
