@@ -17,7 +17,7 @@ def calcular_fft_tramo(t0,tf,fs,audio):
 
     return fft.fftshift(np.abs(X)),f
 
-fs, audio = wav.read("./tp/audio_propio.wav")
+fs, audio = wav.read("./audio_propio.wav")
 muestras = len(audio)
 duracion = muestras / fs
 

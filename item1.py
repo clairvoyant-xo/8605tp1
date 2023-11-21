@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io.wavfile as wav
 
-fs, audio = wav.read("./tp/hh15.wav")
+fs, audio = wav.read("./hh15.wav")
 muestras = len(audio)
 duracion = muestras / fs
 
