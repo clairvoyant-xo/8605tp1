@@ -17,7 +17,7 @@ def calcular_fft_tramo(t0,tf,fs,audio):
 
     return fft.fftshift(np.abs(X)),f
 
-fs, audio = wav.read("./tp/hh15.wav")
+fs, audio = wav.read("./hh15.wav")
 
 t0 = 0.86
 tpulso = 0.006
