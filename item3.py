@@ -15,14 +15,14 @@ def hacer_vocal_duracion(t,audio,fs):
 
 fs, audio = wav.read("./hh15.wav")
 
-t0 = 0.86
-f0 = 176
+t0 = 0.88
+f0 = 180
 tpulso = 1/f0
 
 n1 = 1
-n2 = 10
-n3 = 20
-n4 = 30
+n2 = 5
+n3 = 10
+n4 = 15
 
 X1 = calcular_fft_tramo(t0,t0 + n1 * tpulso,fs,audio)
 X2 = calcular_fft_tramo(t0,t0 + n2 * tpulso,fs,audio)
@@ -40,6 +40,6 @@ a3 = hacer_vocal_duracion(1,x3,fs).astype(audio.dtype)
 a4 = hacer_vocal_duracion(1,x4,fs).astype(audio.dtype)
 
 wav.write("./inversa_1_pulso.wav",fs,a1)
-wav.write("./inversa_10_pulsos.wav",fs,a2)
-wav.write("./inversa_20_pulsos.wav",fs,a3)
-wav.write("./inversa_30_pulsos.wav",fs,a3)
+wav.write("./inversa_5_pulsos.wav",fs,a2)
+wav.write("./inversa_10_pulsos.wav",fs,a3)
+wav.write("./inversa_15_pulsos.wav",fs,a4)
