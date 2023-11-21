@@ -10,16 +10,14 @@ def calcular_fft_tramo(t0,tf,fs,audio):
     return fft.fft(audio[n0:nf])
 
 def hacer_vocal_duracion(t,audio,fs):
-    longitud = (int) (t * fs)
-    vocal = audio
-    while(len(vocal) < longitud):
-        vocal = np.append(vocal,audio)
-    return vocal
+    repeticiones = (int)  ((t * fs) / len(audio))
+    return np.tile(audio,repeticiones)
 
 fs, audio = wav.read("./hh15.wav")
 
-t0 = 0.8
-tpulso = 0.0071
+t0 = 0.86
+f0 = 176
+tpulso = 1/f0
 
 n1 = 1
 n2 = 10
