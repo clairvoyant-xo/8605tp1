@@ -62,7 +62,7 @@ n = np.arange(0,len(x),1)
 
 vocal = sgn.sosfilt(sos,x)
 
-a0,b0 = sgn.iirnotch(f0,15,fs=fs)
+a0,b0 = sgn.iirnotch(f0,30,fs=fs)
 
 vocal_sin_f0 = sgn.lfilter(a0,b0,vocal)
 
