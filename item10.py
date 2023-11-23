@@ -4,6 +4,15 @@ import scipy.signal as sgn
 import scipy.fft as fft
 import scipy.io.wavfile as wav
 
+def cepstrum_rango_vocal(x,fs):
+    n0 = (int) (1/500 * fs)
+    nf = (int) (1/50 * fs) + 1
+
+    cepstrum = fft.ifft(np.log(np.abs(fft.fft(x))))
+    q = np.arange(0,len(x) / fs, 1/fs)
+
+    return cepstrum[n0:nf],q[n0:nf]
+
 def u(n):
     return np.heaviside(n,1)
 
@@ -16,9 +25,6 @@ def muestrear_pulsos_gloticos(t0,p0,tp,tn,fs,n):
     for i in range(0,longitud_pulso):
         x[i] = pulso_glotico(i/fs,p0,tp,tn)
     return np.tile(x,n)
-
-def calcular_fft_pulsos(fs,x):
-    return fft.fftshift(fft.fft(x)),fft.fftshift(fft.fftfreq(len(x), 1/fs))
 
 def p(F,B,fs):
     return np.exp(-2 * np.pi * B/fs) * np.exp(2j * np.pi * F/fs)
@@ -58,31 +64,15 @@ p = polos_vocal(vocal_a,fs)
 sos = forma_sos_filtro(p)
 
 x = muestrear_pulsos_gloticos(1/f0,p0,tp,tn,fs,k)
-n = np.arange(0,len(x),1)
-
 vocal = sgn.sosfilt(sos,x)
 
-a0,b0 = sgn.iirnotch(f0,15,fs=fs)
-
-vocal_sin_f0 = sgn.lfilter(a0,b0,vocal)
-
-fs, audio = wav.read("./hh15.wav")
-wav.write("./vocal_sin_f0.wav",fs,vocal_sin_f0.astype(audio.dtype))
+C, q = cepstrum_rango_vocal(vocal,fs)
 
 plt.figure(1)
-plt.title('Pulso glótico filtrado')
-plt.xlabel('n')
-plt.ylabel('Amplitud')
-plt.stem(n,vocal_sin_f0,markerfmt=' ',basefmt="gray")
-plt.grid()
-
-X, f = calcular_fft_pulsos(fs,vocal_sin_f0)
-
-plt.figure(2)
-plt.title('Amplitud de FFT del pulso glótico filtrado')
-plt.xlabel('Frecuencia [Hz]')
-plt.ylabel('Amplitud')
-plt.stem(f,np.abs(X),markerfmt=' ',basefmt="gray")
+plt.title('Cepstrum de pulso glótico filtrado')
+plt.xlabel('Quefrencia [s]')
+plt.ylabel('Re(C)')
+plt.stem(q,np.real(C),markerfmt=' ',basefmt="gray")
 plt.grid()
 
 plt.show()

@@ -31,7 +31,7 @@ vocal_i = [[330,2765,3740,4366],[70,130,178,200]]
 vocal_o = [[546,934,2966,3930],[97,130,185,240]]
 vocal_u = [[382,740,2760,3380],[74,150,210,180]]
 
-p = polos_vocal(vocal_o,fs)
+p = polos_vocal(vocal_a,fs)
 sos = forma_sos_filtro(p)
 
 w, h = sgn.sosfreqz(sos,fs=fs)

@@ -4,7 +4,7 @@ import scipy.signal as sgn
 
 def calcular_espectrograma_tramo(t0,tf,ancho,paso,fs,audio):
     n0 = (int) (t0 * fs)
-    nf = (int) (tf * fs)
+    nf = (int) (tf * fs) + 1
     x = audio[n0:nf]
     return sgn.spectrogram(x,fs,nperseg=(int) (ancho * fs),noverlap=(int) ((ancho - paso) * fs))
 

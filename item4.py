@@ -5,14 +5,13 @@ import scipy.fft as fft
 
 def calcular_fft_tramo(t0,tf,fs,audio):
     n0 = (int) (t0 * fs)
-    nf = (int) (tf * fs)
+    nf = (int) (tf * fs) + 1
 
     x = audio[n0:nf]
     if(len(x) < 4096):
         x = np.append(x,np.zeros(4096-len(x)))
-    X = fft.fft(x)
 
-    return fft.fftshift(X),fft.fftshift(fft.fftfreq(len(x), 1/fs))
+    return fft.fftshift(fft.fft(x)),fft.fftshift(fft.fftfreq(len(x), 1/fs))
 
 fs, audio = wav.read("./audio_propio.wav")
 muestras = len(audio)

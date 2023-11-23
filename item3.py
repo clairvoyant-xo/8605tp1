@@ -5,7 +5,7 @@ import scipy.fft as fft
 
 def calcular_fft_tramo(t0,tf,fs,audio):
     n0 = (int) (t0 * fs)
-    nf = (int) (tf * fs)
+    nf = (int) (tf * fs) + 1
 
     return fft.fft(audio[n0:nf])
 
