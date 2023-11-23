@@ -4,14 +4,19 @@ import scipy.signal as sgn
 import scipy.fft as fft
 import scipy.io.wavfile as wav
 
-def cepstrum_rango_vocal(x,fs):
-    n0 = (int) (1/500 * fs)
-    nf = (int) (1/50 * fs) + 1
+def cepstrum_tramo(t0,tf,audio,fs):
+    n0 = (int) (t0 * fs)
+    nf = (int) (tf * fs) + 1
 
-    cepstrum = fft.ifft(np.log(np.abs(fft.fft(x))))
-    q = np.arange(0,len(x) / fs, 1/fs)
+    c0 = (int) (1/500 * fs)
+    cf = (int) (1/50 * fs) + 1
 
-    return cepstrum[n0:nf],q[n0:nf]
+    tramo = audio[n0:nf]
+
+    cepstrum = fft.ifft(np.log(np.abs(fft.fft(tramo))))
+    q = np.arange(0,len(tramo) / fs, 1/fs)
+
+    return cepstrum[c0:cf],q[c0:cf]
 
 def u(n):
     return np.heaviside(n,1)
@@ -66,7 +71,10 @@ sos = forma_sos_filtro(p)
 x = muestrear_pulsos_gloticos(1/f0,p0,tp,tn,fs,k)
 vocal = sgn.sosfilt(sos,x)
 
-C, q = cepstrum_rango_vocal(vocal,fs)
+t0 = 0.4
+tf = 0.6
+
+C, q = cepstrum_tramo(t0,tf,vocal,fs)
 
 plt.figure(1)
 plt.title('Cepstrum de pulso glótico filtrado')
