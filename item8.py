@@ -18,11 +18,7 @@ def muestrear_pulsos_gloticos(t0,p0,tp,tn,fs,n):
     return np.tile(x,n)
 
 def calcular_fft_pulsos(fs,x):
-    longitud_muestra = len(x)
-    X = fft.fft(x)
-    f = np.arange(0,longitud_muestra,1) * fs / (longitud_muestra) - fs / 2
-
-    return fft.fftshift(X),f
+    return fft.fftshift(fft.fft(x)),fft.fftshift(fft.fftfreq(len(x), 1/fs))
 
 def p(F,B,fs):
     return np.exp(-2 * np.pi * B/fs) * np.exp(2j * np.pi * F/fs)
@@ -47,7 +43,7 @@ def forma_sos_filtro(polos):
 
 fs = 16e3
 f0 = 200
-p0 = 1
+p0 = 500
 tp = 0.4 * 1/f0
 tn = 0.16 * 1/f0
 k = 200
@@ -64,19 +60,19 @@ sos = forma_sos_filtro(p)
 x = muestrear_pulsos_gloticos(1/f0,p0,tp,tn,fs,k)
 n = np.arange(0,len(x),1)
 
-filtro = sgn.sosfilt(sos,x)
+vocal = sgn.sosfilt(sos,x)
 
 fs, audio = wav.read("./hh15.wav")
-wav.write("./vocal.wav",fs,filtro.astype(audio.dtype))
+wav.write("./vocal.wav",fs,vocal.astype(audio.dtype))
 
 plt.figure(1)
 plt.title('Pulso glótico filtrado')
 plt.xlabel('n')
 plt.ylabel('Amplitud')
-plt.stem(n,filtro,markerfmt=' ',basefmt="gray")
+plt.stem(n,vocal,markerfmt=' ',basefmt="gray")
 plt.grid()
 
-X, f = calcular_fft_pulsos(fs,filtro)
+X, f = calcular_fft_pulsos(fs,vocal)
 
 plt.figure(2)
 plt.title('Amplitud de FFT del pulso glótico filtrado')

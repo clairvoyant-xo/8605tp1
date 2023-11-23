@@ -8,14 +8,11 @@ def calcular_fft_tramo(t0,tf,fs,audio):
     nf = (int) (tf * fs)
 
     x = audio[n0:nf]
-    while(len(x) < 4096):
-        x = np.append(x,np.array([0]))
+    if(len(x) < 4096):
+        x = np.append(x,np.zeros(4096-len(x)))
     X = fft.fft(x)
 
-    longitud_muestra = len(x)
-    f = np.arange(0,longitud_muestra,1) * fs / (longitud_muestra) - fs / 2
-
-    return fft.fftshift(np.abs(X)),f
+    return fft.fftshift(X),fft.fftshift(fft.fftfreq(len(x), 1/fs))
 
 fs, audio = wav.read("./hh15.wav")
 
@@ -34,21 +31,21 @@ plt.figure(1)
 plt.title('Amplitud de FFT de un pulso de vocal [a]')
 plt.xlabel('Frecuencia [Hz]')
 plt.ylabel('Amplitud')
-plt.stem(f1,X1,markerfmt=' ',basefmt="gray")
+plt.stem(f1,np.abs(X1),markerfmt=' ',basefmt="gray")
 plt.grid()
 
 plt.figure(2)
 plt.title('Amplitud de FFT de 5 pulsos de vocal [a]')
 plt.xlabel('Frecuencia [Hz]')
 plt.ylabel('Amplitud')
-plt.stem(f2,X2,markerfmt=' ',basefmt="gray")
+plt.stem(f2,np.abs(X2),markerfmt=' ',basefmt="gray")
 plt.grid()
 
 plt.figure(3)
 plt.title('Amplitud de FFT de 20 pulsos de vocal [a]')
 plt.xlabel('Frecuencia [Hz]')
 plt.ylabel('Amplitud')
-plt.stem(f3,X3,markerfmt=' ',basefmt="gray")
+plt.stem(f3,np.abs(X3),markerfmt=' ',basefmt="gray")
 plt.grid()
 
 plt.show()
