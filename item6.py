@@ -19,28 +19,28 @@ def calcular_fft_pulsos(fs,x):
     return fft.fftshift(fft.fft(x)),fft.fftshift(fft.fftfreq(len(x), 1/fs))
 
 f0 = 200
-p0 = 1
+p0 = 200
 tp = 0.4 * 1/f0
 tn = 0.16 * 1/f0
-k = 10
-t0 = -0.05
-tf = 0.15
+k = 20
+t0 = 0
+tf = 0.1
 fs = 16e3
 
 x = muestrear_pulsos_gloticos(1/f0,p0,tp,tn,fs,k)
-n = np.arange(0,len(x),1)
+t = np.arange(0,len(x),1) / fs
 
 plt.figure(1)
-plt.title('Muestreo de pulsos glóticos')
-plt.xlabel('n')
+plt.title('Pulsos glóticos de entrada')
+plt.xlabel('Tiempo [s]')
 plt.ylabel('Amplitud')
-plt.stem(n,x,markerfmt=' ',basefmt="gray")
+plt.stem(t,x,markerfmt=' ',basefmt="gray")
 plt.grid()
 
 X, f = calcular_fft_pulsos(fs,x)
 
 plt.figure(2)
-plt.title('Amplitud de FFT de pulsos glóticos')
+plt.title('Amplitud de FFT de 20 pulsos glóticos')
 plt.xlabel('Frecuencia [Hz]')
 plt.ylabel('Amplitud')
 plt.stem(f,np.abs(X),markerfmt=' ',basefmt="gray")

@@ -15,12 +15,12 @@ def calcular_fft_tramo(t0,tf,fs,audio):
 
 fs, audio = wav.read("./hh15.wav")
 
-t0 = 0.86
-tpulso = 0.006
+t0 = 0.88
+tpulso = 1/175
 
 n1 = 1
 n2 = 5
-n3 = 20
+n3 = 10
 
 X1, f1 = calcular_fft_tramo(t0,t0 + n1 * tpulso,fs,audio)
 X2, f2 = calcular_fft_tramo(t0,t0 + n2 * tpulso,fs,audio)
@@ -41,7 +41,7 @@ plt.stem(f2,np.abs(X2),markerfmt=' ',basefmt="gray")
 plt.grid()
 
 plt.figure(3)
-plt.title('Amplitud de FFT de 20 pulsos de vocal [a]')
+plt.title('Amplitud de FFT de 10 pulsos de vocal [a]')
 plt.xlabel('Frecuencia [Hz]')
 plt.ylabel('Amplitud')
 plt.stem(f3,np.abs(X3),markerfmt=' ',basefmt="gray")

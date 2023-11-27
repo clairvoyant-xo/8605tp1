@@ -26,7 +26,7 @@ tf = 1
 C, q = cepstrum_tramo(t0,tf,audio,fs)
 
 plt.figure(1)
-plt.title('Cepstrum del audio original')
+plt.title('Cepstrum de fonema [a] de la señal original')
 plt.xlabel('Quefrencia [s]')
 plt.ylabel('Re(C)')
 plt.stem(q,np.real(C),markerfmt=' ',basefmt="gray")

@@ -52,12 +52,18 @@ def forma_sos_filtro(polos):
         sos[i][5] = np.abs(polos[2*i])**2
     return sos
 
+def generar_vocal(vocal,fs,f0,p0,tp,tn,t):
+    p = polos_vocal(vocal,fs)
+    sos = forma_sos_filtro(p)
+    x = muestrear_pulsos_gloticos(1/f0,p0,tp,tn,fs,(int) (t * f0))
+
+    return sgn.sosfilt(sos,x), np.arange(0,len(x),1) / fs
+
 fs = 16e3
 f0 = 200
-p0 = 500
+p0 = 200
 tp = 0.4 * 1/f0
 tn = 0.16 * 1/f0
-k = 200
 
 vocal_a = [[830,1400,2890,3930],[110,160,210,230]]
 vocal_e = [[500,2000,3130,4150],[80,156,190,220]]
@@ -65,19 +71,15 @@ vocal_i = [[330,2765,3740,4366],[70,130,178,200]]
 vocal_o = [[546,934,2966,3930],[97,130,185,240]]
 vocal_u = [[382,740,2760,3380],[74,150,210,180]]
 
-p = polos_vocal(vocal_a,fs)
-sos = forma_sos_filtro(p)
+vocal, t = generar_vocal(vocal_a,fs,f0,p0,tp,tn,1)
 
-x = muestrear_pulsos_gloticos(1/f0,p0,tp,tn,fs,k)
-vocal = sgn.sosfilt(sos,x)
-
-t0 = 0.4
-tf = 0.6
+t0 = 0
+tf = 1
 
 C, q = cepstrum_tramo(t0,tf,vocal,fs)
 
 plt.figure(1)
-plt.title('Cepstrum de pulso glótico filtrado')
+plt.title('Cepstrum de fonema [a] sintetizado')
 plt.xlabel('Quefrencia [s]')
 plt.ylabel('Re(C)')
 plt.stem(q,np.real(C),markerfmt=' ',basefmt="gray")

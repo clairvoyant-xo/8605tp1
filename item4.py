@@ -17,6 +17,9 @@ fs, audio = wav.read("./audio_propio.wav")
 muestras = len(audio)
 duracion = muestras / fs
 
+print('Frecuencia de muestreo: ' + str(fs) + ' Hz')
+print('Duración: ' + str(duracion) + ' segundos')
+
 plt.figure(1)
 t = np.linspace(0,duracion,muestras)
 plt.stem(t,audio,markerfmt=' ',basefmt="gray")
@@ -25,8 +28,9 @@ plt.xlabel('Tiempo [s]')
 plt.ylabel('Amplitud')
 plt.grid()
 
-t0 = 1.92
-tpulso = 0.008
+t0 = 0.23
+f0 = 140
+tpulso = 1/f0
 
 n = 10
 

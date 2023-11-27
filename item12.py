@@ -11,7 +11,7 @@ def psola_expandir(t0,tf,audio,fs,padding,n):
     x = audio[n0:nf]
     x = np.append(x,np.zeros(padding))
 
-    return np.tile(x,n), np.arange(0,len(x) * n,1)
+    return np.tile(x,n), np.arange(0,len(x) * n,1) / fs
 
 def psola_comprimir(t0,tf,audio,fs,overlap,n):
     n0 = (int) (t0 * fs)
@@ -24,7 +24,7 @@ def psola_comprimir(t0,tf,audio,fs,overlap,n):
 
     x = x[:-overlap]
 
-    return np.tile(x,n), np.arange(0,len(x) * n,1)
+    return np.tile(x,n), np.arange(0,len(x) * n,1) / fs
 
 def u(n):
     return np.heaviside(n,1)
@@ -63,12 +63,18 @@ def forma_sos_filtro(polos):
         sos[i][5] = np.abs(polos[2*i])**2
     return sos
 
+def generar_vocal(vocal,fs,f0,p0,tp,tn,t):
+    p = polos_vocal(vocal,fs)
+    sos = forma_sos_filtro(p)
+    x = muestrear_pulsos_gloticos(1/f0,p0,tp,tn,fs,(int) (t * f0))
+
+    return sgn.sosfilt(sos,x), np.arange(0,len(x),1) / fs
+
 fs = 16e3
 f0 = 200
-p0 = 500
+p0 = 200
 tp = 0.4 * 1/f0
 tn = 0.16 * 1/f0
-k = 1
 
 vocal_a = [[830,1400,2890,3930],[110,160,210,230]]
 vocal_e = [[500,2000,3130,4150],[80,156,190,220]]
@@ -76,35 +82,29 @@ vocal_i = [[330,2765,3740,4366],[70,130,178,200]]
 vocal_o = [[546,934,2966,3930],[97,130,185,240]]
 vocal_u = [[382,740,2760,3380],[74,150,210,180]]
 
-p = polos_vocal(vocal_a,fs)
-sos = forma_sos_filtro(p)
-
-x = muestrear_pulsos_gloticos(1/f0,p0,tp,tn,fs,k)
-vocal = sgn.sosfilt(sos,x)
+vocal, t1 = generar_vocal(vocal_a,fs,f0,p0,tp,tn,1)
 
 padding_10 = 8
-padding_20 = 16
-padding_30 = 24
 
-vocal_psola, n = psola_comprimir(0,1/f0,vocal,fs,padding_10,200)
+vocal_psola_c, tc = psola_comprimir(0,1/f0,vocal,fs,padding_10,200)
+vocal_psola_e, te = psola_expandir(0,1/f0,vocal,fs,padding_10,200)
 
 fs, audio = wav.read("./hh15.wav")
-wav.write("./vocal_psola.wav",fs,vocal_psola.astype(audio.dtype))
+wav.write("./vocal_psola_c.wav",fs,vocal_psola_c.astype(audio.dtype))
+wav.write("./vocal_psola_e.wav",fs,vocal_psola_e.astype(audio.dtype))
+
+X, f1 = calcular_fft_pulsos(fs,vocal)
+Pc, f2 = calcular_fft_pulsos(fs,vocal_psola_c)
+Pe, f3 = calcular_fft_pulsos(fs,vocal_psola_e)
 
 plt.figure(1)
-plt.title('Pulso glótico filtrado con PSOLA')
-plt.xlabel('n')
-plt.ylabel('Amplitud')
-plt.stem(n,vocal_psola,markerfmt=' ',basefmt="gray")
-plt.grid()
-
-X, f = calcular_fft_pulsos(fs,vocal_psola)
-
-plt.figure(2)
-plt.title('Amplitud de FFT del pulso glótico filtrado con PSOLA')
+plt.title('Amplitud de FFT del fonema [a] sintetizado procesado con PSOLA')
 plt.xlabel('Frecuencia [Hz]')
 plt.ylabel('Amplitud')
-plt.stem(f,np.abs(X),markerfmt=' ',basefmt="gray")
+plt.stem(f1,np.abs(X),markerfmt=' ',basefmt="gray")
+plt.stem(f2,np.abs(Pc),'r',markerfmt=' ',basefmt="gray")
+plt.stem(f3,np.abs(Pe),'g',markerfmt=' ',basefmt="gray")
+plt.legend(['Fonema original','Fonema expandido 10%','Fonema comprimido 10%'])
 plt.grid()
 
 plt.show()
